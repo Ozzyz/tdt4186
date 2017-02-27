@@ -47,7 +47,6 @@ public class Barber implements Runnable {
                     millis = Globals.barberSleep+
                             (int) (Math.random() * (Constants.MAX_BARBER_SLEEP - Globals.barberSleep));
                     gui.println(String.format("Barber #%s waiting for customer. ", pos));
-                    gui.barberIsSleeping(pos);
                     sleep(millis);
 
                 }
@@ -79,6 +78,7 @@ public class Barber implements Runnable {
 	private void sleep(int millis){
 		try {
             System.out.printf("Barber sleeping for %d millis\n", millis);
+			gui.barberIsSleeping(pos);
 			Thread.sleep(millis);
             gui.barberIsAwake(pos);
 		} catch (InterruptedException e) {
