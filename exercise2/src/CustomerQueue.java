@@ -26,11 +26,11 @@ public class CustomerQueue {
 	    while(isFull()){
 		try{
 		    wait();}
-		catch(Exeption e){}
+		catch(Exception e){}
 	    }
         customerQueue.add(customer);
         gui.fillLoungeChair(customerQueue.size()-1, customer);
-	notify();
+	notifyAll();
 	}
 
     public int size(){
@@ -40,8 +40,9 @@ public class CustomerQueue {
 	public synchronized Customer next() {
 	    while(isEmpty()){
 		try{
+		    
 		    wait();}
-		catch(Exeption e){}
+		catch(Exception e){}
 	    }
         gui.emptyLoungeChair(customerQueue.size()-1);
         Customer customer = customerQueue.remove(0);

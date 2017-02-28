@@ -1,4 +1,3 @@
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import java.util.Queue;
 
@@ -29,16 +28,16 @@ public class Doorman implements Runnable {
 	 */
 	@Override
 	public void run() {
-                    Customer customer = new Customer();
-                    customerQueue.add(customer);
-                    gui.println("Doorman was notified of free chair");
-                } else {
-                    gui.println("Doorman waiting for free chair");
-                }
-                sleep();
+	    while(true){
+	     gui.println("Doorman waiting for free chair");
+             Customer customer = new Customer();
+             customerQueue.add(customer);
+             gui.println("Doorman was notified of free chair");
+              
+              sleep();
+	    }
             }
-        }
-    }
+        
 
 	public void startThread() {
         thread = new Thread(this);
@@ -57,7 +56,7 @@ public class Doorman implements Runnable {
         try {
             // If customer queue not full, bring in new customer, then sleep
             int millis = Globals.doormanSleep+
-                    (int) (Math.random() * (Constants.MAX_DOORMAN_SLEEP - Constants.MIN_DOORMAN_SLEEP));
+		(int) (Math.random() * (/*Constants.MAX_DOORMAN_SLEEP*/ - Constants.MIN_DOORMAN_SLEEP));
             //int millis = Globals.doormanSleep;
             gui.println("Doorman sleeping!");
             System.out.printf("Size of queue: %s\n", customerQueue.size());

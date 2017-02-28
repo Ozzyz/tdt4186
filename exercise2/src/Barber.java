@@ -32,18 +32,23 @@ public class Barber implements Runnable {
 	 */
 	@Override
 	public void run(){
-	    
+	    while(true){
 	     gui.barberIsSleeping(pos);
              Customer customer = customerQueue.next();
-	     gui.fillBarberChair(pos, customer);
 	     gui.barberIsAwake(pos);
+	     gui.fillBarberChair(pos, customer);
              gui.println(String.format("Barber #%s got customer. ", pos));
-	     gui.emptyBarberChair(pos);
-        }
-	millis =Globals.barberWork + (int) (Math.random() * (Constants.MAX_BARBER_WORK - Constants.MIN_BARBER_WORK));
+	     
+	     	int millis =Globals.barberWork + (int) (Math.random() * (Constants.MAX_BARBER_WORK - Constants.MIN_BARBER_WORK));
 	
-	sleep(millis);            
-    }
+	sleep(millis);
+	gui.emptyBarberChair(pos);
+	gui.barberIsSleeping(pos);
+	sleep(millis);
+	    }
+        }
+           
+    
 
 	/**
 	 * Starts the barber running as a separate thread.
@@ -68,8 +73,6 @@ public class Barber implements Runnable {
 
 	private void sleep(int millis){
 		try {
-		    gui.barberIsSleeping(pos);
-		    
             System.out.printf("Barber sleeping for %d millis\n", millis);
 			Thread.sleep(millis);
 			
