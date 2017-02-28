@@ -23,7 +23,7 @@ public class Barber implements Runnable {
 	public Barber(CustomerQueue queue, Gui gui, int pos) {
 		this.gui = gui;
 		this.customerQueue = queue;
-        this.pos = pos;
+		this.pos = pos;
 	}
 
 	/**
@@ -32,30 +32,17 @@ public class Barber implements Runnable {
 	 */
 	@Override
 	public void run(){
-		// Try to get a customer, then sleep
-            int millis;
-        for (int i = 0; i < 500; i++) {
-            synchronized (this) {
-                if (!customerQueue.isEmpty()) {
-                    Customer customer = customerQueue.next();
-                    gui.fillBarberChair(pos, customer);
-                    gui.barberIsAwake(pos);
-                    gui.println(String.format("Barber #%s got customer. ", pos));
-                    millis =Globals.barberWork + (int) (Math.random() * (Constants.MAX_BARBER_WORK - Constants.MIN_BARBER_WORK));
-                    sleep(millis);
-                    gui.emptyBarberChair(pos);
-
-                } else {
-                    millis = Globals.barberSleep+
-                            (int) (Math.random() * (Constants.MAX_BARBER_SLEEP - Globals.barberSleep));
-                    gui.println(String.format("Barber #%s waiting for customer. ", pos));
-                    gui.barberIsSleeping(pos);
-                    sleep(millis);
-                    gui.barberIsAwake(pos);
-
-                }
-            }
+	    
+	     gui.barberIsSleeping(pos);
+             Customer customer = customerQueue.next();
+	     gui.fillBarberChair(pos, customer);
+	     gui.barberIsAwake(pos);
+             gui.println(String.format("Barber #%s got customer. ", pos));
+	     gui.emptyBarberChair(pos);
         }
+	millis =Globals.barberWork + (int) (Math.random() * (Constants.MAX_BARBER_WORK - Constants.MIN_BARBER_WORK));
+	
+	sleep(millis);            
     }
 
 	/**
@@ -81,8 +68,12 @@ public class Barber implements Runnable {
 
 	private void sleep(int millis){
 		try {
+		    gui.barberIsSleeping(pos);
+		    
             System.out.printf("Barber sleeping for %d millis\n", millis);
 			Thread.sleep(millis);
+			
+        gui.barberIsAwake(pos);
 		} catch (InterruptedException e) {
 			System.err.println("Could not sleep thread!");
 		}

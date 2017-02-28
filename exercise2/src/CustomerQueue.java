@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,27 +16,37 @@ public class CustomerQueue {
     private final Gui gui;
     private final int MAX_QUEUE_LENGTH;
     private ArrayList<Customer> customerQueue = new ArrayList<>();
-    /*
-    private int firstPos = 0; // Index of longest waiting customer
-    private int lastPos = 0; // Index of most recent customer
-*/
+
     public CustomerQueue(int queueLength, Gui gui) {
         this.gui = gui;
         this.MAX_QUEUE_LENGTH = queueLength;
 	}
 
-	public void add(Customer customer) {
+	public synchronized void add(Customer customer) {
+	    while(isFull()){
+		try{
+		    wait();}
+		catch(Exeption e){}
+	    }
         customerQueue.add(customer);
         gui.fillLoungeChair(customerQueue.size()-1, customer);
+	notify();
 	}
 
     public int size(){
         return customerQueue.size();
     }
 
-	public Customer next() {
+	public synchronized Customer next() {
+	    while(isEmpty()){
+		try{
+		    wait();}
+		catch(Exeption e){}
+	    }
         gui.emptyLoungeChair(customerQueue.size()-1);
-        return customerQueue.remove(0);
+        Customer customer = customerQueue.remove(0);
+	notifyAll();
+	return customer;
 	}
 
     public boolean isEmpty(){

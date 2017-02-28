@@ -29,10 +29,6 @@ public class Doorman implements Runnable {
 	 */
 	@Override
 	public void run() {
-
-        for (int i = 0; i < 500; i++) {
-            synchronized (this) {
-                if (!customerQueue.isFull()) {
                     Customer customer = new Customer();
                     customerQueue.add(customer);
                     gui.println("Doorman was notified of free chair");
