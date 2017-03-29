@@ -131,8 +131,6 @@ public class Process {
 		return processId;
 	}
 
-	// Add more methods as needed
-
 
 	public long getCpuTimeNeeded(){
 		return cpuTimeNeeded;
@@ -145,8 +143,6 @@ public class Process {
 			Random random = new Random();
 			int max = (int) (1.2*avgIoInterval);
 			int min = (int) (0.8*avgIoInterval);
-			System.out.println(max);
-			System.out.println(min);
 			timeToNextIoOperation = (long) random.nextInt(max+1-min)+min;
 		}
 		return timeToNextIoOperation;
