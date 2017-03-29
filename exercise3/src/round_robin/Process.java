@@ -1,5 +1,7 @@
 package round_robin;
 
+import java.util.Random;
+
 /**
  * This class contains data associated with processes,
  * and methods for manipulating this data as well as
@@ -80,10 +82,13 @@ public class Process {
 	public void timeSpentInCpu(long clock){
 		long time = clock - timeOfLastEvent;
 		timeSpentInCpu += time;
-		cpuTimeNeeded -= time;
-		timeToNextIoOperation -= time;
+		setCpuTimeNeeded(cpuTimeNeeded-time);
+		setTimeToNextIoOperation(timeToNextIoOperation-time);
+
 		timeOfLastEvent = clock;
 	}
+
+
 
 	public void timeSpentInIOQueue(long clock){
 		nofTimesInIoQueue++;
@@ -112,10 +117,10 @@ public class Process {
      * @param statistics	The Statistics object to be updated.
      */
 	public void updateStatistics(Statistics statistics) {
-		System.out.println("HELLO WE ARE UPDATING STATISTICS");
 		statistics.totalTimeSpentWaitingForMemory += timeSpentWaitingForMemory;
         statistics.totalTimeSpentInReadyQueue += timeSpentInReadyQueue;
-        statistics.totalTimeSpentInCpu += timeSpentInCpu;
+		// For some reason, two variables are used for the same thing
+        //statistics.totalTimeSpentInCpu += timeSpentInCpu;
 		statistics.totalBusyCpuTime += timeSpentInCpu;
         statistics.totalTimeSpentWaitingForIo += timeSpentWaitingForIo;
         statistics.totalTimeSpentInIo += timeSpentInIo;
@@ -139,11 +144,27 @@ public class Process {
 	public long getTimeToNextIoOperation(){
 		if(timeToNextIoOperation <= 0){
 			// generate new value for each time we process
-			timeToNextIoOperation = avgIoInterval;
+			Random random = new Random();
+
 		}
 		return timeToNextIoOperation;
 	}
 
+	public void setTimeToNextIoOperation(long time){
+		if(time < 0){
+			timeToNextIoOperation = 0;
+		}else{
+			timeToNextIoOperation = time;
+		}
+	}
+
+	public void setCpuTimeNeeded(long time){
+		if(time < 0){
+			cpuTimeNeeded = 0;
+		}else{
+			cpuTimeNeeded = time;
+		}
+	}
 
 
 }
