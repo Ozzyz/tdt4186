@@ -1,6 +1,7 @@
 package round_robin;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * This class implements functionality associated with
@@ -52,7 +53,8 @@ public class Io {
         if(ioQueue.isEmpty()) return null;
         activeProcess = ioQueue.remove();
         activeProcess.timeSpentInIOQueue(clock);
-        return new Event(Event.END_IO, clock+avgIoTime);
+        // Make IO-time a bit random (100 -> 200% of avgIoTime)
+        return new Event(Event.END_IO, (long) (clock+avgIoTime + avgIoTime*Math.random()));
     }
 
     /**
