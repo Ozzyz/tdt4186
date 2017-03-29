@@ -55,9 +55,8 @@ public class Simulator
 		io = new Io(ioQueue, avgIoTime, statistics);
 
 		memoryQueue.add(new Process(memorySize, avgIoTime));
+		statistics.nofCreatedProcesses++;
 		clock = 0;
-
-		// Add code as needed
 
     }
 
@@ -185,6 +184,7 @@ public class Simulator
 		Event event = cpu.activeProcessLeft(clock);
 		eventQueue.insertEvent(event);
 		memory.processCompleted(p);
+		statistics.nofCompletedProcesses++;
 		p.updateStatistics(statistics);
 	}
 

@@ -52,7 +52,7 @@ public class Io {
         if(ioQueue.isEmpty()) return null;
         activeProcess = ioQueue.remove();
         activeProcess.timeSpentInIOQueue(clock);
-        return new Event(Event.END_IO, clock);
+        return new Event(Event.END_IO, clock+avgIoTime);
     }
 
     /**

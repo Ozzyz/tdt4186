@@ -20,7 +20,6 @@ public class Cpu {
     private Process activeProcess = null;
 
     public Cpu(LinkedList<Process> cpuQueue, long maxCpuTime, Statistics statistics) {
-        // Incomplete
         this.cpuQueue = cpuQueue;
         this.maxCpuTime = maxCpuTime;
         this.statistics = statistics;
@@ -36,8 +35,7 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event insertProcess(Process p, long clock) {
-        System.out.printf("Inserting %d in cpuqueue at time %d\n", p.getProcessId(), clock);
-        p.timeSpentInReadyQueue(clock);
+        //System.out.printf("Inserting %d in cpuqueue at time %d\n", p.getProcessId(), clock);
         cpuQueue.add(p);
         if(isIdle()){
             return switchProcess(clock);
@@ -59,14 +57,18 @@ public class Cpu {
             return null;
         }
         activeProcess = cpuQueue.remove();
+        activeProcess.timeSpentInReadyQueue(clock);
+        // If the process is done after this cycle, and no io is needed, end the process after processing
         if(activeProcess.getCpuTimeNeeded() <= maxCpuTime && activeProcess.getCpuTimeNeeded() <= activeProcess.getTimeToNextIoOperation()){
             return new Event(Event.END_PROCESS, clock+activeProcess.getCpuTimeNeeded());
         }
+        // If there is a io request in this cycle, send an io request
         else if(activeProcess.getTimeToNextIoOperation() <= maxCpuTime){
             return new Event(Event.IO_REQUEST, clock+activeProcess.getTimeToNextIoOperation());
         }
+
         else{
-            // TODO: Update data in Process
+            // Let the process use its time quantum
             return new Event(Event.SWITCH_PROCESS, clock+maxCpuTime);
         }
     }
@@ -96,10 +98,12 @@ public class Cpu {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
+        if(activeProcess != null) statistics.totalBusyCpuTime += timePassed;
         statistics.cpuQueueLengthTime += cpuQueue.size()*timePassed;
         if (cpuQueue.size() > statistics.cpuQueueLargestLength) {
             statistics.cpuQueueLargestLength = cpuQueue.size();
         }
+
     }
 
     public boolean isIdle(){

@@ -60,7 +60,7 @@ public class Process {
 		// Assign a process ID
 		processId = nextProcessId++;
 
-		timeToNextIoOperation = (long) (0.8*avgIoInterval);
+		timeToNextIoOperation = getTimeToNextIoOperation();
 	}
 
 	/**
@@ -75,16 +75,16 @@ public class Process {
 
 	public void timeSpentInReadyQueue(long clock){
 		nofTimesInReadyQueue++;
-		timeSpentInReadyQueue += clock - timeOfLastEvent;
+        timeSpentInReadyQueue += clock - timeOfLastEvent;
 		timeOfLastEvent = clock;
 	}
 
 	public void timeSpentInCpu(long clock){
 		long time = clock - timeOfLastEvent;
-		timeSpentInCpu += time;
+
+        timeSpentInCpu += time;
 		setCpuTimeNeeded(cpuTimeNeeded-time);
 		setTimeToNextIoOperation(timeToNextIoOperation-time);
-
 		timeOfLastEvent = clock;
 	}
 
@@ -119,17 +119,13 @@ public class Process {
 	public void updateStatistics(Statistics statistics) {
 		statistics.totalTimeSpentWaitingForMemory += timeSpentWaitingForMemory;
         statistics.totalTimeSpentInReadyQueue += timeSpentInReadyQueue;
-		// For some reason, two variables are used for the same thing
-        //statistics.totalTimeSpentInCpu += timeSpentInCpu;
-		statistics.totalBusyCpuTime += timeSpentInCpu;
+        statistics.totalTimeSpentInCpu += timeSpentInCpu;
         statistics.totalTimeSpentWaitingForIo += timeSpentWaitingForIo;
         statistics.totalTimeSpentInIo += timeSpentInIo;
 
         statistics.totalNofTimesInReadyQueue += nofTimesInReadyQueue;
         statistics.totalNofTimesInIoQueue += nofTimesInIoQueue;
-
-        statistics.nofCompletedProcesses++;
-	}
+}
 
 	public long getProcessId() {
 		return processId;
@@ -141,18 +137,24 @@ public class Process {
 	public long getCpuTimeNeeded(){
 		return cpuTimeNeeded;
 	}
+
 	public long getTimeToNextIoOperation(){
 		if(timeToNextIoOperation <= 0){
-			// generate new value for each time we process
+			// generate new value for each time the process is in the cpu
+			// The time to next io is random within certain limits of the io interval
 			Random random = new Random();
-
+			int max = (int) (1.2*avgIoInterval);
+			int min = (int) (0.8*avgIoInterval);
+			System.out.println(max);
+			System.out.println(min);
+			timeToNextIoOperation = (long) random.nextInt(max+1-min)+min;
 		}
 		return timeToNextIoOperation;
 	}
 
 	public void setTimeToNextIoOperation(long time){
 		if(time < 0){
-			timeToNextIoOperation = 0;
+            timeToNextIoOperation = 0;
 		}else{
 			timeToNextIoOperation = time;
 		}
